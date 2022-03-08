@@ -12,19 +12,19 @@ library(lubridate)
 ```
 
 ```{r}
-city <- read_csv("Eco-Totem_Capital_City_Trail_Bike_Counts.csv") %>% 
+city <- read_csv("https://raw.githubusercontent.com/evanokeefe/Stat-479-Portfolio-1/main/Eco-Totem_Capital_City_Trail_Bike_Counts.csv") %>% 
   mutate(Count_Date = parse_date_time(Count_Date, "mdy HM"),
          Date = date(Count_Date),
          Time = hour(Count_Date)) %>% 
   select(Date, Time, Count)
 
-sw <- read_csv("Eco-Totem_Southwest_Path_Bike_Counts.csv") %>% 
+sw <- read_csv("https://raw.githubusercontent.com/evanokeefe/Stat-479-Portfolio-1/main/Eco-Totem_Southwest_Path_Bike_Counts.csv") %>% 
     mutate(Count_Date = parse_date_time(Count_Date, "mdy HM"),
          Date = date(Count_Date),
          Time = hour(Count_Date)) %>% 
   select(Date, Time, Count)
 
-temp <- read_csv("madison-weather-data.csv")
+temp <- read_csv("https://raw.githubusercontent.com/evanokeefe/Stat-479-Portfolio-1/main/madison-weather-data.csv")
 ```
 
 ```{r}
@@ -76,7 +76,7 @@ ggplot(timez) +
 ```
 
 
-I chose to work with Madison bike data because for nearly everything promotional for the city and university, one of the top mentioned items is the number of bike trails. Given how cold it gets in Madison, I chose my first visualization to see how the trail ridership varies month by month. Very much to expectation the ridership increases significantly in the summer. I additionally chose to facet by year to see if there were any interesting outliers that I could pick out. I expected that there would be some increase over the past year or two due to the pandemic and activities such as biking and hiking were said to be good socially distanced activities. However, when looking at the data ridership remained constant through 2020 and declined slightly in 2021.
+I chose to work with Madison bike data because for nearly everything promotional for the city and university, one of the top mentioned items is the number of bike trails. Given how cold it gets in Madison, I chose my first visualization to see how the trail ridership varies month by month. Very much to expectation the ridership increases significantly in the summer. I additionally chose to facet by year to see if there were any interesting outliers that I could pick out. I expected that there would be some increase over the past year or two due to the pandemic and activities such as biking and hiking were said to be good socially distanced activities. However, when looking at the data ridership remained constant through 2020 and declined slightly in 2021. One interesting thing from these plots is the temperature and monthly rider totals work out well on the same scale (when riders are presented in thousands). This neat coincidence allowed the visualization to be much cleaner.
 
 For my second visualization I was curious to see how ridership varied over time on the Capital City Trail vs the Southwest Commuter Path (the two bike paths with bike counters). I initially expected the two graphs to have different peaks since the Southwest path tends to be a primary route to classes, while the Capital City trail is more leisure and commuter. However, when I looked into where the trail counter is located, the results made more sense. The Southwest counter is located on Monroe which is on the edge of where students live, so this data is largely uncaptured. If the counter were located by East Campus Mall or Randall Street I would expect to see a much larger plateau in the middle of the day as students use the path for passing times. On the other hand, the Capital City trail counter in on John Nolan, so it captures much more commuter traffic than I initially thought. 
 
