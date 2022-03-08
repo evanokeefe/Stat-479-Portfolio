@@ -12,19 +12,19 @@ library(lubridate)
 ```
 
 ```{r}
-city <- read_csv("https://raw.githubusercontent.com/evanokeefe/Stat-479-Portfolio/main/Eco-Totem_Capital_City_Trail_Bike_Counts.csv") %>% 
+city <- read_csv("data/Eco-Totem_Capital_City_Trail_Bike_Counts.csv") %>% 
   mutate(Count_Date = parse_date_time(Count_Date, "mdy HM"),
          Date = date(Count_Date),
          Time = hour(Count_Date)) %>% 
   select(Date, Time, Count)
 
-sw <- read_csv("https://raw.githubusercontent.com/evanokeefe/Stat-479-Portfolio/main/Eco-Totem_Southwest_Path_Bike_Counts.csv") %>% 
+sw <- read_csv("data/Eco-Totem_Southwest_Path_Bike_Counts.csv") %>% 
     mutate(Count_Date = parse_date_time(Count_Date, "mdy HM"),
          Date = date(Count_Date),
          Time = hour(Count_Date)) %>% 
   select(Date, Time, Count)
 
-temp <- read_csv("https://raw.githubusercontent.com/evanokeefe/Stat-479-Portfolio/main/madison-weather-data.csv")
+temp <- read_csv("data/madison-weather-data.csv")
 ```
 
 ```{r}
