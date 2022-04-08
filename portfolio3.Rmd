@@ -53,18 +53,62 @@ days
 ```
 
 ```{r}
+df %>% 
+  filter(date == mdy("04/01/2021")) %>% 
+  group_by(artistName) %>% 
+  summarise(count = n()) %>% 
+  slice_max(order_by = count, n = 1) %>% 
+  pull(artistName)
+```
+
+```{r}
+library(plotly)
+
+daily_artist <- function(df, day){
+  print(df %>% filter(date == day))
+  df %>% 
+    filter(date == day) %>% 
+    group_by(artistName) %>% 
+    summarise(count = n()) %>% 
+    slice_max(order_by = count, n = 1) %>% 
+    pull(artistName)
+}
+
+tooltip_fun <- function(df, day, seconds){
+  paste("Date:", day, '\n',
+        "Top Artist:", daily_artist(df, day), '\n',
+        "Total Playtime:", round(seconds_to_period(seconds)))
+}
+
+line_fun <- function(df, df2, start, end){
+  p <- df %>% 
+    filter(date > start, date < end) %>% 
+    ggplot(aes(x = date, y = listen_time)) +
+      geom_point(aes(text = tooltip_fun(df2, date, listen_time * 60))) +
+      geom_line()
+  ggplotly(p, tooltip = c("text"))
+}
+```
+
+
+```{r}
 library(shiny)
+library(shinyBS)
 
 ui <- fluidPage(
    titlePanel("My Spotify Listening Data"),
-   plotOutput("lineplot")
+   dateRangeInput("dateRange",
+                  "Date Range:",
+                  start = min(days$date),
+                  end = max(days$date)),
+   plotlyOutput("lineplot")
 )
 
 server <- function(input, output) {
-  lineplot <- ggplot(days, aes(x = date, y = listen_time)) +
-    geom_point() +
-    geom_line()
-  output$lineplot = renderPlot(lineplot)
+  lineplot <- reactive({
+    line_fun(days, df, input$dateRange[1], input$dateRange[2])
+  })
+  output$lineplot = renderPlotly(lineplot())
 }
 
 shinyApp(ui, server)
