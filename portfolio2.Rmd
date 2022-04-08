@@ -17,13 +17,6 @@ library(shiny)
 library(feasts)
 
 df <- read_csv("data/processed_data.csv")
-
-top3 <- df %>% 
-  group_by(artistName) %>% 
-  summarise(count = n()) %>% 
-  arrange(desc(count)) %>% 
-  head(3) %>% 
-  pull(artistName)
 ```
 
 ```{r ShinyFunctions}
@@ -48,7 +41,7 @@ seasons_plot_fun <- function(df, start, end){
     group_by(date) %>% 
     summarise(count = n()) %>%
     tsibble(index = date) %>% 
-    fill_gaps() %>% 
+    fill_gaps(count = 0) %>% 
     gg_season(period = "month") +
     labs(
       title = "Number of Streams By Month",
@@ -59,11 +52,9 @@ seasons_plot_fun <- function(df, start, end){
 ```
 
 ```{r ShinyApp}
-library(shiny)
-
 months <- unique(df$month)
 
- ui <- fluidPage(
+ui <- fluidPage(
    titlePanel("My Spotify Listening Data"),
    dateRangeInput("dateRange",
                   "Date Range:",
