@@ -1,0 +1,72 @@
+---
+title: "portfolio3"
+author: "Evan O'Keefe"
+date: "3/11/2022"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r DataProcessing}
+library(tidyverse)
+library(lubridate)
+
+df <- read_csv("data/processed_data.csv") %>% 
+  mutate(startTime = endTime - msPlayed / 1000,
+         diff = startTime - lag(endTime),
+         date = as.Date(endTime))
+```
+
+```{r}
+session <- c(0)
+
+sess = 0
+for( i in df$diff[2:nrow(df)]){
+  if( i > 1800){
+    sess = sess + 1
+  }
+  session = c(session, sess)
+}
+
+df$session <- session
+```
+
+```{r}
+sessions <- df %>% 
+  group_by(session) %>% 
+  summarise(startTime = min(startTime),
+            endTime = max(endTime),
+            songs = n()) %>% 
+  mutate(duration = (endTime - startTime) / 60)
+```
+
+```{r}
+days <- df %>% 
+  group_by(month, date) %>% 
+  summarize(listen_time = sum(msPlayed / 60000),
+            songs = n())
+
+days
+```
+
+```{r}
+library(shiny)
+
+ui <- fluidPage(
+   titlePanel("My Spotify Listening Data"),
+   plotOutput("lineplot")
+)
+
+server <- function(input, output) {
+  lineplot <- ggplot(days, aes(x = date, y = listen_time)) +
+    geom_point() +
+    geom_line()
+  output$lineplot = renderPlot(lineplot)
+}
+
+shinyApp(ui, server)
+```
+
